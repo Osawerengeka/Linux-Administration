@@ -1,0 +1,103 @@
+
+#1
+
+dnf group install "Development Tools"
+
+#2
+
+mkdir ~/Builds
+tar zxvf ~/Downloads/bastet-0.43.tgz -C ~/Builds
+cd ~/Builds/bastet-0.43
+yum install boost boost-devel
+yum install ncurses-devel ncurses
+make
+cp bastet /usr/local/bin
+chgrp games /usr/local/bin/bastet
+chmod g+s /usr/local/bin/bastet
+touch /var/games/bastet.scores2
+chgrp games /var/games/bastet.scores2
+chmod 664 /var/games/bastet.scores2
+echo "install:" >> ~/Builds/bastet-0.43/Makefile
+echo "	install -m 755 ~/Builds/bastet-0.43/bastet /usr/local/bin" >> ~/Builds/bastet-0.43/Makefile
+#login as user via GUI or cmd and check if bastet run
+
+#3
+
+rpm -qa >> ~/task3.log
+
+#4
+
+rpm -q --whatrequires gcc >> ~/task4_1.log
+yum whatprovides libgcc >> ~/task4_2.log
+
+#5
+
+yum install createrepo
+mkdir ~/localrepo
+cp ~/Downloads/checkinstall-1.6.2-3.el6.1.x86_64.rpm ~/localrepo
+createrepo ~/localrepo
+echo "[localrepo]" >> /etc/yum.repos.d/LocalRepository.repo
+echo "name=LocalRepository" >> /etc/yum.repos.d/LocalRepository.repo
+echo "baseurl=file:///root/localrepo" >> /etc/yum.repos.d/LocalRepository.repo
+echo "enabled=1" >> /etc/yum.repos.d/LocalRepository.repo
+echo "gpgcheck=0" >> /etc/yum.repos.d/LocalRepository.repo
+
+#6
+
+yum repolist > ~/task6.log
+
+#7
+
+yum install yum-utils
+yum-config-manager --disable \*
+yum-config-manager --enable localrepo
+yum list available
+yum list available > ~/task7.log
+yum install checkinstall
+
+#8
+
+yum-config-manager --enable 
+cd ~/Downloads/
+wget -c https://sourceforge.net/projects/alien-pkg-convert/files/release/alien_8.95.tar.xz
+tar xf alien_8.95.tar.xz
+dnf install perl
+cd alien_8.95
+perl Makefile.PL
+make
+make install
+
+cd ~/Downloads
+alien --to-rpm fortunes-ru_1.52-2_all.deb
+mv fortunes-ru-1.52-3.noarch.rpm fortunes-ru-1.52-3.rpm
+rpm -ivh fortunes-ru-1.52-3.rpm
+
+#9
+
+dnf install https://extras.getpagespeed.com/release-el8-latest.rpm
+dnf install rpmrebuild
+cd ~/Downloads
+dnf download nano
+#set nano as default text editor
+nano ~/.bashrc
+source .bashrc
+rpmrebuild -enp nano-2.9.8-1.el8.x86_64.rpm
+mv /usr/bin/nano /usr/bin/newnano
+
+
+
+
+
+
+
+# dnf update -y
+# dnf install python3 -y
+python3 для проверки
+
+
+
+
+
+
+
+
