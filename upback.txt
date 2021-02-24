@@ -1,0 +1,53 @@
+#!/bin/bash
+
+dat=$(date +%Y-%m-%d)
+
+backdir=$(ls $HOME | grep -E "(^Backup-[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9])+$" | sort -r | head -n 1)
+sour="source"
+resdir="$HOME/restore"
+if [  -d $HOME/$backdir ]
+then
+    if [ ! -d $resdir ]; then mkdir $resdir; fi
+    if [ ! -d "$resdir/$sour" ]; then mkdir "$resdir/$sour"; fi
+
+    allfiles=$(ls  $HOME/$backdir/$sour/ | grep -Ehv "(\.[0-9]+)$")
+    echo "$allfiles"
+    echo "$allfiles" > .files
+    files=($(echo "$allfiles"))
+   
+    while read -r line 
+    do
+	    echo "$line"
+	    if [ -f "$HOME/$backdir/$sour/""$line" ]
+	    then
+		echo "$line"
+	        cp $HOME/"$backdir"/"$sour"/"$line" "$resdir"/"$sour"/"$line" 
+		
+	    fi
+
+    done < .files
+    
+    lastfiles=$(ls -a $HOME/$backdir/$sour/ | grep -Eh "(\.[0-9]+)$")
+    echo "$lastfiles"
+    echo "$lastfiles" > .files
+    files=($(echo "$lastfiles"))
+   
+    while read -r line 
+    do
+	    echo "$line"
+	    line2=$(echo "$line" | rev | cut -c 3- | rev)
+	    echo "--$line2"
+	    if [ -f "$HOME/$backdir/$sour/""$line" ]
+	    then
+	    if [ ! -f "$HOME/$backdir/$sour/""$line2" ]
+	    then
+		echo "---$line"
+	        cp $HOME/"$backdir"/"$sour"/"$line" "$resdir"/"$sour"/"$line" 
+		
+	    fi
+    fi
+
+    done < .files
+
+
+fi

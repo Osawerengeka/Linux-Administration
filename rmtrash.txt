@@ -1,0 +1,28 @@
+#!/bin/bash
+
+
+dir="$HOME/" #"/home/nikolay/"
+dirname=".trash"
+allway=$dir$dirname
+filelog=".trash.log"
+if [ ! -d $allway ]
+then
+    mkdir $allway
+    echo "7" > $allway/.ind
+fi
+name="$1"
+echo "$name"
+if [ -f "$name" ]
+then
+    ind=$(cat $allway/.ind)
+    let "ind = ind + 1"
+    echo "$ind" > $allway/.ind
+    fullname=$PWD/"$name"
+    ln -- "$name" $allway/$ind
+    rm -- "$name"
+    echo ""$ind":"$PWD/"$name"":" >> $allway/$filelog
+else
+    echo $PWD
+    echo "Error file name."
+fi
+
